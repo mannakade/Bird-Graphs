@@ -1,0 +1,155 @@
+getwd()
+setwd("C:/Users/gabri/Desktop/bird")
+black<-read.csv('black.csv')
+blackblack<-read.csv("blackblack.csv")
+
+library(tidyverse)
+library(lubridate)
+
+
+orangeblack <- read.csv("orangeblack.csv")
+
+orangeblack$time <- as.POSIXct(orangeblack$time)
+class(orangeblack$time)
+ggplot(data = orangeblack)+
+  geom_point(aes(x = time, y = mass))
+orangeblack$time <- as.POSIXct(orangeblack$time)
+
+black[hour(black$time) > 9, ]
+day <- black[hour(black$time) > 9 & hour(black$time) < 15, ]
+
+
+
+daytime <- subset(day,mass < 20 & mass > 10)
+ggplot(data = daytime) +
+  geom_point(aes(x = time , y = mass))
+
+#gotta save the subset under a name so youcan reference it when calling to it
+#mass restraints is saved as "daytime" and is referenced in ggplot
+
+pre_migration<-daytime[day(daytime$time)<23, ]
+
+ggplot(data = daytime) +
+  geom_point(aes(x = time , y = mass))
+
+
+#making a linear regression
+head(black)
+
+black$time <- as.POSIXct(black$time)
+
+black_line <- lm(mass ~ time , black)
+
+summary(black_line)
+
+
+#apply a line of best fit to graph
+
+ggplot(black) +
+  geom_point(aes(x = time , y = mass)) +
+  geom_smooth(aes(x = time , y = mass), method = lm)
+
+
+#3 hour long intervals
+#9-12, 12:01 - 15:00, 15:01 - 18:00
+#For each day
+#Extract the slope and plot each time interval for each day
+
+
+#TEMPLATE
+setwd('/Users/patraholmes/Library/Mobile Documents/com~apple~CloudDocs/Desktop/PSP2021/project/YRWA18 - Mass Corrected - Every 5 Seconds')
+black<-read.csv('black.csv')
+library(ggplot2)
+#install.packages("lubridate")
+library(lubridate)
+#install.packages("scales")
+library(scales)
+library(gridExtra)
+#install.packages("ggthemes", dependencies = TRUE)
+library(ggthemes)
+#install.packages('tidyverse')
+library(tidyverse)
+???
+#converts character string into time class
+black$time <- as.POSIXct(black$time)
+???
+#subset by time
+daytime<-black[hour(black$time)>=9 & hour(black$time)<=18,]
+???
+#subset by day
+unique(day(black$time))
+???
+Nov20<-daytime[day(daytime$time)==20, ]
+Nov21<-daytime[day(daytime$time)==21, ]
+Nov22<-daytime[day(daytime$time)==22, ]
+Nov27<-daytime[day(daytime$time)==27, ]
+Nov28<-daytime[day(daytime$time)==28, ]
+Nov29<-daytime[day(daytime$time)==29, ]
+???
+#EACH DAY: add counter, subset result by mass, linearize
+counter20 <- seq(0, (nrow(Nov20)*5)-1, by = 5) 
+black_Nov20_counter <- cbind(Nov20,counter20)
+black_Nov20_counter_mass <- subset(black_Nov20_counter, mass > 10)
+black_Nov20_linear<-lm(mass ~ counter20, black_Nov20_counter)
+summary(black_Nov20_linear) #extract the slope
+???
+counter21 <- seq(0, (nrow(Nov21)*5)-1, by = 5)
+black_Nov21_counter <- cbind(Nov21,counter21)
+black_Nov21_counter_mass <- subset(black_Nov21_counter, mass > 10)
+black_Nov21_linear<-lm(mass ~ counter21, black_Nov21_counter)
+summary(black_Nov21_linear) #extract the slope
+???
+counter22 <- seq(0, (nrow(Nov22)*5)-1, by = 5)
+black_Nov22_counter <- cbind(Nov22,counter22)
+black_Nov22_counter_mass <- subset(black_Nov22_counter, mass > 10)
+black_Nov22_linear<-lm(mass ~ counter22, black_Nov22_counter)
+summary(black_Nov21_linear) #extract the slope
+???
+counter27 <- seq(0, (nrow(Nov27)*5)-1, by = 5)
+black_Nov27_counter <- cbind(Nov27,counter27)
+black_Nov27_counter_mass <- subset(black_Nov27_counter, mass > 10)
+black_Nov27_linear<-lm(mass ~ counter27, black_Nov27_counter)
+summary(black_Nov27_linear) #extract the slope
+???
+counter28 <- seq(0, (nrow(Nov28)*5)-1, by = 5)
+black_Nov28_counter <- cbind(Nov28,counter28)
+black_Nov28_counter_mass <- subset(black_Nov28_counter, mass > 10)
+black_Nov28_linear<-lm(mass ~ counter28, black_Nov28_counter)
+summary(black_Nov28_linear) #extract the slope
+???
+counter29 <- seq(0, (nrow(Nov29)*5)-1, by = 5)
+black_Nov29_counter <- cbind(Nov29,counter29)
+black_Nov29_counter_mass <- subset(black_Nov29_counter, mass > 10)
+black_Nov29_linear<-lm(mass ~ counter29, black_Nov29_counter)
+summary(black_Nov29_linear) #extract the slope
+???
+#try 3 hour intervals: 9-12, 12:01-15, 15:01-18
+#for each day
+#plot each time interval for each day
+???
+#MORNINGS
+Nov20_morning<-black_Nov20_counter[hour(black_Nov20_counter$time)>=9 & hour(black_Nov20_counter$time)<=12,]
+Nov20_morn_linear<-lm(mass~counter20, Nov20_morning)
+summary(Nov20_morn_linear)
+???
+Nov21_morning<-black_Nov21_counter[hour(black_Nov21_counter$time)>=9 & hour(black_Nov21_counter$time)<=12,]
+Nov21_morn_linear<-lm(mass~counter21, Nov21_morning)
+summary(Nov21_morn_linear)
+???
+Nov22_morning<-black_Nov22_counter[hour(black_Nov22_counter$time)>=9 & hour(black_Nov22_counter$time)<=12,]
+Nov22_morn_linear<-lm(mass~counter22, Nov22_morning)
+summary(Nov22_morn_linear)
+???
+p1<-ggplot(Nov20_morning)+
+  geom_point(aes(x=time, y=mass))+
+  geom_smooth(aes(x=time, y=mass), method=lm)+
+  ylim(10,20)
+p2<-ggplot(Nov21_morning)+
+  geom_point(aes(x=time, y=mass))+
+  geom_smooth(aes(x=time, y=mass), method=lm)+
+  ylim(10,20)
+p3<-ggplot(Nov22_morning)+
+  geom_point(aes(x=time, y=mass))+
+  geom_smooth(aes(x=time, y=mass), method=lm)+
+  ylim(10,20)
+grid.arrange(p1,p2,p3,ncol=1)
